@@ -10,6 +10,26 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
 
+-- Load optional external config (so secrets aren't in this raw file)
+-- Create a ModuleScript in ReplicatedStorage called "KB_Config" that returns a table of overrides.
+-- Example KB_Config contents (do NOT commit to public repo):
+-- return {
+--     NotificationTitle = "MyPrivateTitle",
+--     NotificationText = "Loaded from secure config",
+--     -- any tokens or secrets go here
+--     Secrets = {
+--         WebhookToken = "REPLACE_ME"
+--     }
+-- }
+local config = {}
+local configModule = ReplicatedStorage:FindFirstChild("KB_Config")
+if configModule and configModule:IsA("ModuleScript") then
+    local ok, result = pcall(require, configModule)
+    if ok and type(result) == "table" then
+        config = result
+    end
+end
+
 -- Variables
 local connections = {}
 local settings = {
@@ -29,11 +49,11 @@ local settings = {
     spinBot = false,
     sprintWhileGuarding = false,
     
-    -- Customizable values
-    autoTimeValue = 12,
-    speedBoostValue = 30,
-    dribbleSpeedValue = 25,
-    spinBotSpeed = 10
+    -- Customizable values (defaults; can be overridden by KB_Config)
+    autoTimeValue = (config.autoTimeValue or 12),
+    speedBoostValue = (config.speedBoostValue or 30),
+    dribbleSpeedValue = (config.dribbleSpeedValue or 25),
+    spinBotSpeed = (config.spinBotSpeed or 10)
 }
 
 -- GUI Creation
@@ -387,9 +407,12 @@ game.Players.PlayerRemoving:Connect(function(plr)
     end
 end)
 
--- Success notification
+-- Success notification (text/title may be provided from KB_Config to avoid embedding identifying info)
+local notifTitle = (config.NotificationTitle or "kqzscripts")
+local notifText = (config.NotificationText or "Practical Basketball Pro loaded successfully!")
+
 game.StarterGui:SetCore("SendNotification", {
-    Title = "kqzscripts";
-    Text = "Practical Basketball Pro loaded successfully!";
+    Title = notifTitle;
+    Text = notifText;
     Duration = 5;
 })
