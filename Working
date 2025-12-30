@@ -1,6 +1,3 @@
--- Practical Basketball Script v16
--- Features: Auto Time, Auto Block, Dribble Enhancer, Walkspeed, Ankle Breaker, Sprint, Stamina, Anti Stun, REC Support
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
