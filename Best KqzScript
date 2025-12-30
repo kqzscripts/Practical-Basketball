@@ -1,0 +1,314 @@
+-- KQZ Scripts - Practical Basketball Advanced Script
+-- Version 2.1.0 | Premium Features
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Core Variables
+local KQZSettings = {
+    autoTime = false,
+    timeValue = 5,
+    autoSprint = false,
+    infiniteStamina = false,
+    speedBoostOn = false,
+    speedBoostOff = false,
+    speedMultiplierOn = 2.5,
+    speedMultiplierOff = 1.8,
+    disableMoveLock = false,
+    dribbleMacro = false,
+    antiOutOfBounds = false,
+    dribbleSpeedBoost = false,
+    autoGuard = false,
+    autoBlock = false,
+    disableTurnLock = false,
+    autoSteal = false,
+    spinBot = false,
+    sprintWhileGuarding = false,
+    macroDelay = 0.1
+}
+
+-- Enhanced UI Creation with Modern Design
+local function createModernUI()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "KQZScripts"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ScreenGui.Parent = PlayerGui
+
+    -- Main Frame with Gradient Background
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Name = "MainFrame"
+    MainFrame.Size = UDim2.new(0, 420, 0, 580)
+    MainFrame.Position = UDim2.new(0, 50, 0, 50)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Parent = ScreenGui
+
+    -- UI Corner for modern look
+    local MainCorner = Instance.new("UICorner")
+    MainCorner.CornerRadius = UDim.new(0, 12)
+    MainCorner.Parent = MainFrame
+
+    -- Gradient Background
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(35, 35, 45)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 30))
+    })
+    Gradient.Rotation = 45
+    Gradient.Parent = MainFrame
+
+    -- Title Header
+    local TitleFrame = Instance.new("Frame")
+    TitleFrame.Name = "TitleFrame"
+    TitleFrame.Size = UDim2.new(1, 0, 0, 60)
+    TitleFrame.Position = UDim2.new(0, 0, 0, 0)
+    TitleFrame.BackgroundColor3 = Color3.fromRGB(120, 80, 255)
+    TitleFrame.BorderSizePixel = 0
+    TitleFrame.Parent = MainFrame
+
+    local TitleCorner = Instance.new("UICorner")
+    TitleCorner.CornerRadius = UDim.new(0, 12)
+    TitleCorner.Parent = TitleFrame
+
+    -- Title Gradient
+    local TitleGradient = Instance.new("UIGradient")
+    TitleGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(140, 100, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 60, 255))
+    })
+    TitleGradient.Rotation = 45
+    TitleGradient.Parent = TitleFrame
+
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Name = "TitleLabel"
+    TitleLabel.Size = UDim2.new(1, -20, 1, 0)
+    TitleLabel.Position = UDim2.new(0, 10, 0, 0)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = "🏀 KQZ Scripts | Practical Basketball"
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.TextScaled = true
+    TitleLabel.TextStrokeTransparency = 0
+    TitleLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.Parent = TitleFrame
+
+    -- Scrolling Frame for Features
+    local ScrollFrame = Instance.new("ScrollingFrame")
+    ScrollFrame.Name = "ScrollFrame"
+    ScrollFrame.Size = UDim2.new(1, -20, 1, -80)
+    ScrollFrame.Position = UDim2.new(0, 10, 0, 70)
+    ScrollFrame.BackgroundTransparency = 1
+    ScrollFrame.BorderSizePixel = 0
+    ScrollFrame.ScrollBarThickness = 6
+    ScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(120, 80, 255)
+    ScrollFrame.Parent = MainFrame
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0, 8)
+    UIListLayout.Parent = ScrollFrame
+
+    return ScreenGui, ScrollFrame
+end
+
+-- Enhanced Toggle Button Creation
+local function createToggleButton(parent, text, settingKey, layoutOrder)
+    local ButtonFrame = Instance.new("Frame")
+    ButtonFrame.Name = text .. "Frame"
+    ButtonFrame.Size = UDim2.new(1, 0, 0, 45)
+    ButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    ButtonFrame.BorderSizePixel = 0
+    ButtonFrame.LayoutOrder = layoutOrder
+    ButtonFrame.Parent = parent
+
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 8)
+    ButtonCorner.Parent = ButtonFrame
+
+    local ToggleButton = Instance.new("TextButton")
+    ToggleButton.Name = "ToggleButton"
+    ToggleButton.Size = UDim2.new(0, 60, 0, 25)
+    ToggleButton.Position = UDim2.new(1, -70, 0.5, -12.5)
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+    ToggleButton.BorderSizePixel = 0
+    ToggleButton.Text = "OFF"
+    ToggleButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+    ToggleButton.TextScaled = true
+    ToggleButton.Font = Enum.Font.GothamBold
+    ToggleButton.Parent = ButtonFrame
+
+    local ToggleCorner = Instance.new("UICorner")
+    ToggleCorner.CornerRadius = UDim.new(0, 6)
+    ToggleCorner.Parent = ToggleButton
+
+    local Label = Instance.new("TextLabel")
+    Label.Name = "Label"
+    Label.Size = UDim2.new(1, -80, 1, 0)
+    Label.Position = UDim2.new(0, 10, 0, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = text
+    Label.TextColor3 = Color3.fromRGB(220, 220, 220)
+    Label.TextScaled = true
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Font = Enum.Font.Gotham
+    Label.Parent = ButtonFrame
+
+    -- Toggle Functionality with Animation
+    ToggleButton.MouseButton1Click:Connect(function()
+        KQZSettings[settingKey] = not KQZSettings[settingKey]
+        
+        local targetColor = KQZSettings[settingKey] and Color3.fromRGB(100, 255, 100) or Color3.fromRGB(60, 60, 70)
+        local targetText = KQZSettings[settingKey] and "ON" or "OFF"
+        
+        local colorTween = TweenService:Create(
+            ToggleButton,
+            TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = targetColor}
+        )
+        
+        ToggleButton.Text = targetText
+        colorTween:Play()
+    end)
+
+    return ButtonFrame
+end
+
+-- Enhanced Slider Creation
+local function createSlider(parent, text, settingKey, minValue, maxValue, layoutOrder)
+    local SliderFrame = Instance.new("Frame")
+    SliderFrame.Name = text .. "SliderFrame"
+    SliderFrame.Size = UDim2.new(1, 0, 0, 65)
+    SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    SliderFrame.BorderSizePixel = 0
+    SliderFrame.LayoutOrder = layoutOrder
+    SliderFrame.Parent = parent
+
+    local SliderCorner = Instance.new("UICorner")
+    SliderCorner.CornerRadius = UDim.new(0, 8)
+    SliderCorner.Parent = SliderFrame
+
+    local Label = Instance.new("TextLabel")
+    Label.Name = "Label"
+    Label.Size = UDim2.new(1, 0, 0, 25)
+    Label.Position = UDim2.new(0, 10, 0, 5)
+    Label.BackgroundTransparency = 1
+    Label.Text = text .. ": " .. KQZSettings[settingKey]
+    Label.TextColor3 = Color3.fromRGB(220, 220, 220)
+    Label.TextScaled = true
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Font = Enum.Font.Gotham
+    Label.Parent = SliderFrame
+
+    local SliderBar = Instance.new("Frame")
+    SliderBar.Name = "SliderBar"
+    SliderBar.Size = UDim2.new(1, -20, 0, 8)
+    SliderBar.Position = UDim2.new(0, 10, 0, 35)
+    SliderBar.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+    SliderBar.BorderSizePixel = 0
+    SliderBar.Parent = SliderFrame
+
+    local SliderBarCorner = Instance.new("UICorner")
+    SliderBarCorner.CornerRadius = UDim.new(0, 4)
+    SliderBarCorner.Parent = SliderBar
+
+    local SliderFill = Instance.new("Frame")
+    SliderFill.Name = "SliderFill"
+    SliderFill.Size = UDim2.new((KQZSettings[settingKey] - minValue) / (maxValue - minValue), 0, 1, 0)
+    SliderFill.Position = UDim2.new(0, 0, 0, 0)
+    SliderFill.BackgroundColor3 = Color3.fromRGB(120, 80, 255)
+    SliderFill.BorderSizePixel = 0
+    SliderFill.Parent = SliderBar
+
+    local SliderFillCorner = Instance.new("UICorner")
+    SliderFillCorner.CornerRadius = UDim.new(0, 4)
+    SliderFillCorner.Parent = SliderFill
+
+    local SliderButton = Instance.new("TextButton")
+    SliderButton.Name = "SliderButton"
+    SliderButton.Size = UDim2.new(0, 16, 0, 16)
+    SliderButton.Position = UDim2.new((KQZSettings[settingKey] - minValue) / (maxValue - minValue), -8, 0.5, -8)
+    SliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    SliderButton.BorderSizePixel = 0
+    SliderButton.Text = ""
+    SliderButton.Parent = SliderBar
+
+    local SliderButtonCorner = Instance.new("UICorner")
+    SliderButtonCorner.CornerRadius = UDim.new(0, 8)
+    SliderButtonCorner.Parent = SliderButton
+
+    -- Slider Functionality
+    local dragging = false
+    
+    SliderButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local mousePos = input.Position
+            local sliderPos = SliderBar.AbsolutePosition
+            local sliderSize = SliderBar.AbsoluteSize
+            
+            local relativePos = math.max(0, math.min(1, (mousePos.X - sliderPos.X) / sliderSize.X))
+            local value = math.floor(minValue + (maxValue - minValue) * relativePos)
+            
+            KQZSettings[settingKey] = value
+            Label.Text = text .. ": " .. value
+            
+            SliderFill.Size = UDim2.new(relativePos, 0, 1, 0)
+            SliderButton.Position = UDim2.new(relativePos, -8, 0.5, -8)
+        end
+    end)
+
+    return SliderFrame
+end
+
+-- Advanced Basketball Functions
+local function getCharacterAndHumanoid()
+    local character = LocalPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        local rootPart = character:FindFirstChild("HumanoidRootPart")
+        return character, humanoid, rootPart
+    end
+    return nil, nil, nil
+end
+
+-- Auto Time Function
+local function autoTime()
+    spawn(function()
+        while KQZSettings.autoTime do
+            wait(KQZSettings.timeValue)
+            -- Auto time logic for Practical Basketball
+            local remotes = ReplicatedStorage:GetChildren()
+            for _, remote in pairs(remotes) do
+                if remote:IsA("RemoteEvent") and string.find(remote.Name:lower(), "time") then
+                    pcall(function()
+                        remote:FireServer()
+                    end)
+                end
+            end
+        end
+    end)
+end
+
+-- Enhanced Speed Boost System
+local function applySpeedBoost()
+    spawn(function()
+        while KQZSettings.speedBoostOn or KQZSettings.speedBoostOff do
+            local character, humanoid, rootPart = getCharacterAn
