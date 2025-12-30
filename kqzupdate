@@ -1,0 +1,395 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local rootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Variables
+local connections = {}
+local settings = {
+    autoTime = false,
+    autoSprint = false,
+    infiniteStamina = false,
+    speedBoostOn = false,
+    speedBoostOff = false,
+    disableMovementLock = false,
+    dribbleMacro = false,
+    antiOutOfBounds = false,
+    dribbleSpeedBoost = false,
+    autoGuard = false,
+    autoBlock = false,
+    disableTurnLock = false,
+    autoSteal = false,
+    spinBot = false,
+    sprintWhileGuarding = false,
+    
+    -- Customizable values
+    autoTimeValue = 12,
+    speedBoostValue = 30,
+    dribbleSpeedValue = 25,
+    spinBotSpeed = 10
+}
+
+-- GUI Creation
+local MainTab = Window:NewTab("⚡ Main Features")
+local MovementTab = Window:NewTab("🏃 Movement")
+local GameplayTab = Window:NewTab("🏀 Gameplay")
+local AdvancedTab = Window:NewTab("⚙️ Advanced")
+
+local MainSection = MainTab:NewSection("Core Features")
+local SpeedSection = MovementTab:NewSection("Speed & Movement")
+local BasketballSection = GameplayTab:NewSection("Basketball Mechanics")
+local AutoSection = AdvancedTab:NewSection("Automation")
+
+-- Main Features
+MainSection:NewToggle("Auto Time", "Automatically manages game time", function(state)
+    settings.autoTime = state
+    if state then
+        autoTimeFunction()
+    else
+        if connections.autoTime then
+            connections.autoTime:Disconnect()
+        end
+    end
+end)
+
+MainSection:NewSlider("Time Value", "Set auto time value (seconds)", 24, 1, function(val)
+    settings.autoTimeValue = val
+end)
+
+MainSection:NewToggle("Auto Sprint & Infinite Stamina", "Never run out of stamina", function(state)
+    settings.autoSprint = state
+    settings.infiniteStamina = state
+    if state then
+        autoSprintFunction()
+    else
+        if connections.autoSprint then
+            connections.autoSprint:Disconnect()
+        end
+    end
+end)
+
+-- Speed & Movement
+SpeedSection:NewToggle("Speed Boost (On Ball)", "Boost speed when you have the ball", function(state)
+    settings.speedBoostOn = state
+    if state then
+        speedBoostOnBallFunction()
+    end
+end)
+
+SpeedSection:NewToggle("Speed Boost (Off Ball)", "Boost speed when you don't have the ball", function(state)
+    settings.speedBoostOff = state
+    if state then
+        speedBoostOffBallFunction()
+    end
+end)
+
+SpeedSection:NewSlider("Speed Boost Value", "Adjust speed multiplier", 50, 16, function(val)
+    settings.speedBoostValue = val
+end)
+
+SpeedSection:NewToggle("Disable Movement Lock", "Move freely after pump fake", function(state)
+    settings.disableMovementLock = state
+    if state then
+        disableMovementLockFunction()
+    end
+end)
+
+SpeedSection:NewToggle("Anti Out of Bounds", "Prevents going out of bounds", function(state)
+    settings.antiOutOfBounds = state
+    if state then
+        antiOutOfBoundsFunction()
+    end
+end)
+
+-- Basketball Mechanics
+BasketballSection:NewToggle("Dribble Macro", "Automated dribbling", function(state)
+    settings.dribbleMacro = state
+    if state then
+        dribbleMacroFunction()
+    end
+end)
+
+BasketballSection:NewToggle("Dribble Speed Boost", "Faster dribbling", function(state)
+    settings.dribbleSpeedBoost = state
+    if state then
+        dribbleSpeedBoostFunction()
+    end
+end)
+
+BasketballSection:NewSlider("Dribble Speed", "Adjust dribble speed", 50, 1, function(val)
+    settings.dribbleSpeedValue = val
+end)
+
+BasketballSection:NewToggle("Auto Guard", "Automatically guard opponents", function(state)
+    settings.autoGuard = state
+    if state then
+        autoGuardFunction()
+    end
+end)
+
+BasketballSection:NewToggle("Auto Block", "Automatically block shots", function(state)
+    settings.autoBlock = state
+    if state then
+        autoBlockFunction()
+    end
+end)
+
+BasketballSection:NewToggle("Auto Steal", "Automatically steal the ball", function(state)
+    settings.autoSteal = state
+    if state then
+        autoStealFunction()
+    end
+end)
+
+-- Advanced Features
+AdvancedTab:NewToggle("Disable Turn Lock", "Remove turn restrictions", function(state)
+    settings.disableTurnLock = state
+    if state then
+        disableTurnLockFunction()
+    end
+end)
+
+AdvancedTab:NewToggle("Spin Bot", "Continuous spinning", function(state)
+    settings.spinBot = state
+    if state then
+        spinBotFunction()
+    end
+end)
+
+AdvancedTab:NewSlider("Spin Bot Speed", "Adjust spin speed", 20, 1, function(val)
+    settings.spinBotSpeed = val
+end)
+
+AdvancedTab:NewToggle("Sprint While Guarding", "Sprint during defense", function(state)
+    settings.sprintWhileGuarding = state
+    if state then
+        sprintWhileGuardingFunction()
+    end
+end)
+
+-- Function Definitions
+function autoTimeFunction()
+    connections.autoTime = RunService.Heartbeat:Connect(function()
+        if settings.autoTime then
+            -- Auto time logic here
+            pcall(function()
+                local timeRemote = ReplicatedStorage:FindFirstChild("TimeRemote")
+                if timeRemote then
+                    timeRemote:FireServer(settings.autoTimeValue)
+                end
+            end)
+        end
+    end)
+end
+
+function autoSprintFunction()
+    connections.autoSprint = RunService.Heartbeat:Connect(function()
+        if settings.autoSprint and settings.infiniteStamina then
+            pcall(function()
+                if humanoid then
+                    -- Set infinite stamina
+                    local staminaValue = player:FindFirstChild("Stamina")
+                    if staminaValue then
+                        staminaValue.Value = 100
+                    end
+                    
+                    -- Auto sprint
+                    humanoid.WalkSpeed = 20
+                end
+            end)
+        end
+    end)
+end
+
+function speedBoostOnBallFunction()
+    connections.speedBoostOn = RunService.Heartbeat:Connect(function()
+        if settings.speedBoostOn then
+            pcall(function()
+                local hasBall = player:FindFirstChild("HasBall")
+                if hasBall and hasBall.Value and humanoid then
+                    humanoid.WalkSpeed = settings.speedBoostValue
+                end
+            end)
+        end
+    end)
+end
+
+function speedBoostOffBallFunction()
+    connections.speedBoostOff = RunService.Heartbeat:Connect(function()
+        if settings.speedBoostOff then
+            pcall(function()
+                local hasBall = player:FindFirstChild("HasBall")
+                if hasBall and not hasBall.Value and humanoid then
+                    humanoid.WalkSpeed = settings.speedBoostValue
+                end
+            end)
+        end
+    end)
+end
+
+function disableMovementLockFunction()
+    connections.disableMovementLock = RunService.Heartbeat:Connect(function()
+        if settings.disableMovementLock then
+            pcall(function()
+                local bodyVelocity = rootPart:FindFirstChild("BodyVelocity")
+                if bodyVelocity then
+                    bodyVelocity:Destroy()
+                end
+            end)
+        end
+    end)
+end
+
+function dribbleMacroFunction()
+    connections.dribbleMacro = RunService.Heartbeat:Connect(function()
+        if settings.dribbleMacro then
+            pcall(function()
+                local dribbleRemote = ReplicatedStorage:FindFirstChild("DribbleRemote")
+                if dribbleRemote then
+                    dribbleRemote:FireServer()
+                end
+            end)
+        end
+    end)
+end
+
+function antiOutOfBoundsFunction()
+    connections.antiOutOfBounds = RunService.Heartbeat:Connect(function()
+        if settings.antiOutOfBounds and rootPart then
+            pcall(function()
+                local courtBounds = Workspace:FindFirstChild("Court")
+                if courtBounds then
+                    local position = rootPart.Position
+                    -- Keep player within court bounds
+                    if position.X > 100 or position.X < -100 or position.Z > 50 or position.Z < -50 then
+                        rootPart.Position = Vector3.new(0, position.Y, 0)
+                    end
+                end
+            end)
+        end
+    end)
+end
+
+function dribbleSpeedBoostFunction()
+    connections.dribbleSpeedBoost = RunService.Heartbeat:Connect(function()
+        if settings.dribbleSpeedBoost then
+            pcall(function()
+                local isDribbling = player:FindFirstChild("Dribbling")
+                if isDribbling and isDribbling.Value and humanoid then
+                    humanoid.WalkSpeed = settings.dribbleSpeedValue
+                end
+            end)
+        end
+    end)
+end
+
+function autoGuardFunction()
+    connections.autoGuard = RunService.Heartbeat:Connect(function()
+        if settings.autoGuard then
+            pcall(function()
+                local guardRemote = ReplicatedStorage:FindFirstChild("GuardRemote")
+                if guardRemote then
+                    guardRemote:FireServer()
+                end
+            end)
+        end
+    end)
+end
+
+function autoBlockFunction()
+    connections.autoBlock = RunService.Heartbeat:Connect(function()
+        if settings.autoBlock then
+            pcall(function()
+                local blockRemote = ReplicatedStorage:FindFirstChild("BlockRemote")
+                if blockRemote then
+                    blockRemote:FireServer()
+                end
+            end)
+        end
+    end)
+end
+
+function disableTurnLockFunction()
+    connections.disableTurnLock = RunService.Heartbeat:Connect(function()
+        if settings.disableTurnLock then
+            pcall(function()
+                local bodyAngularVelocity = rootPart:FindFirstChild("BodyAngularVelocity")
+                if bodyAngularVelocity then
+                    bodyAngularVelocity:Destroy()
+                end
+            end)
+        end
+    end)
+end
+
+function autoStealFunction()
+    connections.autoSteal = RunService.Heartbeat:Connect(function()
+        if settings.autoSteal then
+            pcall(function()
+                local stealRemote = ReplicatedStorage:FindFirstChild("StealRemote")
+                if stealRemote then
+                    stealRemote:FireServer()
+                end
+            end)
+        end
+    end)
+end
+
+function spinBotFunction()
+    connections.spinBot = RunService.Heartbeat:Connect(function()
+        if settings.spinBot and rootPart then
+            pcall(function()
+                rootPart.CFrame = rootPart.CFrame * CFrame.Angles(0, math.rad(settings.spinBotSpeed), 0)
+            end)
+        end
+    end)
+end
+
+function sprintWhileGuardingFunction()
+    connections.sprintWhileGuarding = RunService.Heartbeat:Connect(function()
+        if settings.sprintWhileGuarding then
+            pcall(function()
+                local isGuarding = player:FindFirstChild("Guarding")
+                if isGuarding and isGuarding.Value and humanoid then
+                    humanoid.WalkSpeed = 20
+                end
+            end)
+        end
+    end)
+end
+
+-- Character respawn handling
+player.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+    humanoid = newCharacter:WaitForChild("Humanoid")
+    rootPart = newCharacter:WaitForChild("HumanoidRootPart")
+end)
+
+-- Cleanup function
+local function cleanup()
+    for _, connection in pairs(connections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+end
+
+game.Players.PlayerRemoving:Connect(function(plr)
+    if plr == player then
+        cleanup()
+    end
+end)
+
+-- Success notification
+game.StarterGui:SetCore("SendNotification", {
+    Title = "kqzscripts";
+    Text = "Practical Basketball Pro loaded successfully!";
+    Duration = 5;
+})
