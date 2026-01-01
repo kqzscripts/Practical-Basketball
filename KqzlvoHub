@@ -1,268 +1,214 @@
--- 🔥 KqzlvoHub v2.0 FIXED | Practical Basketball
--- Copy ALL code → Paste → Execute
-
+-- KqzlvoHub v3.0 | Practical Basketball | GUARANTEED TO LOAD
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
 local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
+local PlayerGui = Player.PlayerGui
 
--- Clear old UI
-for _, gui in pairs(PlayerGui:GetChildren()) do
-    if gui.Name == "KqzlvoHub" then gui:Destroy() end
+print("KqzlvoHub Loading... 1/3")
+
+-- DELETE OLD UI
+for _, v in pairs(PlayerGui:GetChildren()) do
+    if v.Name == "KqzlvoHub" then v:Destroy() end
 end
 
--- Settings
-local Settings = {
-    AutoTime = false, PerfectTime = 0.7, EarlyTime = 0.1,
-    AutoSprint = false, InfiniteStamina = false,
-    SpeedBoost = false, OnBallSpeed = 25, OffBallSpeed = 20,
-    DisableMovementLock = false, DribbleMacro = false,
-    AntiOOB = true, DribbleSpeedBoost = false,
-    AutoGuard = false, AutoBlock = false,
-    DisableTurnLock = false, AutoSteal = false,
-    SpinBot = false, SprintGuard = false
-}
+print("KqzlvoHub Loading... 2/3")
 
--- MAIN UI
+-- MAIN GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "KqzlvoHub"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 
-local MainFrame = Instance.new("Frame")
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
-MainFrame.BorderSizePixel = 0
-MainFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
-MainFrame.Size = UDim2.new(0, 450, 0, 500)
-MainFrame.Active = true
-MainFrame.Draggable = true
+print("KqzlvoHub Loading... 3/3")
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 15)
-UICorner.Parent = MainFrame
+-- FRAME
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.2)
+Frame.Position = UDim2.new(0.05, 0, 0.05, 0)
+Frame.Size = UDim2.new(0, 350, 0, 450)
+Frame.Active = true
+Frame.Draggable = true
 
-local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(0, 162, 255)
-UIStroke.Thickness = 2
-UIStroke.Parent = MainFrame
+-- CORNER
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 12)
+Corner.Parent = Frame
+
+-- STROKE
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.new(0, 0.6, 1)
+Stroke.Thickness = 2
+Stroke.Parent = Frame
 
 -- TITLE
 local Title = Instance.new("TextLabel")
-Title.Parent = MainFrame
+Title.Parent = Frame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, 0, 0, 50)
-Title.Font = Enum.Font.GothamBold
-Title.Text = "⭐ KqzlvoHub v2.0 ⭐ Practical Basketball"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Text = "⭐ KqzlvoHub v3.0 ⭐"
+Title.TextColor3 = Color3.new(1, 1, 1)
 Title.TextScaled = true
+Title.Font = Enum.Font.GothamBold
 
--- CLOSE BUTTON
-local CloseBtn = Instance.new("TextButton")
-CloseBtn.Parent = MainFrame
-CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-CloseBtn.BorderSizePixel = 0
-CloseBtn.Position = UDim2.new(1, -50, 0, 10)
-CloseBtn.Size = UDim2.new(0, 35, 0, 35)
-CloseBtn.Font = Enum.Font.GothamBold
-CloseBtn.Text = "✕"
-CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseBtn.TextScaled = true
+-- CLOSE
+local Close = Instance.new("TextButton")
+Close.Parent = Frame
+Close.BackgroundColor3 = Color3.new(1, 0.2, 0.2)
+Close.Size = UDim2.new(0, 40, 0, 40)
+Close.Position = UDim2.new(1, -45, 0, 5)
+Close.Text = "X"
+Close.TextColor3 = Color3.new(1, 1, 1)
+Close.TextScaled = true
+Close.Font = Enum.Font.GothamBold
 
 local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(0, 10)
-CloseCorner.Parent = CloseBtn
+CloseCorner.CornerRadius = UDim.new(0, 8)
+CloseCorner.Parent = Close
 
-CloseBtn.MouseButton1Click:Connect(function()
+Close.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- SCROLLING CONTENT
-local ScrollingFrame = Instance.new("ScrollingFrame")
-ScrollingFrame.Parent = MainFrame
-ScrollingFrame.BackgroundTransparency = 1
-ScrollingFrame.Position = UDim2.new(0, 10, 0, 60)
-ScrollingFrame.Size = UDim2.new(1, -20, 1, -70)
-ScrollingFrame.ScrollBarThickness = 8
-ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 162, 255)
+-- SCROLL
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Parent = Frame
+Scroll.BackgroundTransparency = 1
+Scroll.Position = UDim2.new(0, 0, 0, 55)
+Scroll.Size = UDim2.new(1, 0, 1, -55)
+Scroll.ScrollBarThickness = 6
 
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Parent = ScrollingFrame
-UIListLayout.Padding = UDim.new(0, 8)
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+local Layout = Instance.new("UIListLayout")
+Layout.Parent = Scroll
+Layout.Padding = UDim.new(0, 5)
 
 -- TOGGLE FUNCTION
-local function CreateToggle(text, settingKey, callback)
-    local ToggleFrame = Instance.new("Frame")
-    ToggleFrame.Parent = ScrollingFrame
-    ToggleFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
-    ToggleFrame.Size = UDim2.new(1, 0, 0, 45)
+local function Toggle(text, callback)
+    local Box = Instance.new("Frame")
+    Box.Parent = Scroll
+    Box.BackgroundColor3 = Color3.new(0.15, 0.15, 0.25)
+    Box.Size = UDim2.new(1, -10, 0, 40)
     
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 12)
-    Corner.Parent = ToggleFrame
+    local BoxCorner = Instance.new("UICorner")
+    BoxCorner.CornerRadius = UDim.new(0, 8)
+    BoxCorner.Parent = Box
     
     local Label = Instance.new("TextLabel")
-    Label.Parent = ToggleFrame
+    Label.Parent = Box
     Label.BackgroundTransparency = 1
-    Label.Position = UDim2.new(0, 15, 0, 0)
-    Label.Size = UDim2.new(0.75, 0, 1, 0)
-    Label.Font = Enum.Font.Gotham
+    Label.Size = UDim2.new(1, -60, 1, 0)
+    Label.Position = UDim2.new(0, 10, 0, 0)
     Label.Text = text
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextColor3 = Color3.new(1, 1, 1)
     Label.TextScaled = true
+    Label.Font = Enum.Font.Gotham
+    Label.TextXAlignment = Enum.TextXAlignment.Left
     
-    local ToggleBtn = Instance.new("TextButton")
-    ToggleBtn.Parent = ToggleFrame
-    ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    ToggleBtn.BorderSizePixel = 0
-    ToggleBtn.Position = UDim2.new(1, -55, 0.5, -18)
-    ToggleBtn.Size = UDim2.new(0, 35, 0, 35)
-    ToggleBtn.Font = Enum.Font.GothamBold
-    ToggleBtn.Text = "OFF"
-    ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleBtn.TextScaled = true
+    local Btn = Instance.new("TextButton")
+    Btn.Parent = Box
+    Btn.BackgroundColor3 = Color3.new(0.8, 0.2, 0.2)
+    Btn.Size = UDim2.new(0, 50, 0.7, 0)
+    Btn.Position = UDim2.new(1, -55, 0.15, 0)
+    Btn.Text = "OFF"
+    Btn.TextColor3 = Color3.new(1, 1, 1)
+    Btn.TextScaled = true
+    Btn.Font = Enum.Font.GothamBold
     
     local BtnCorner = Instance.new("UICorner")
-    BtnCorner.CornerRadius = UDim.new(0, 10)
-    BtnCorner.Parent = ToggleBtn
+    BtnCorner.CornerRadius = UDim.new(0, 6)
+    BtnCorner.Parent = Btn
     
-    local toggled = Settings[settingKey]
-    ToggleBtn.BackgroundColor3 = toggled and Color3.fromRGB(50, 200, 50) or Color3.fromRGB(200, 50, 50)
-    ToggleBtn.Text = toggled and "ON" or "OFF"
-    
-    ToggleBtn.MouseButton1Click:Connect(function()
-        toggled = not toggled
-        Settings[settingKey] = toggled
-        TweenService:Create(ToggleBtn, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-            BackgroundColor3 = toggled and Color3.fromRGB(50, 200, 50) or Color3.fromRGB(200, 50, 50)
-        }):Play()
-        ToggleBtn.Text = toggled and "ON" or "OFF"
-        callback(toggled)
+    local enabled = false
+    Btn.MouseButton1Click:Connect(function()
+        enabled = not enabled
+        Btn.BackgroundColor3 = enabled and Color3.new(0.2, 0.8, 0.2) or Color3.new(0.8, 0.2, 0.2)
+        Btn.Text = enabled and "ON" or "OFF"
+        callback(enabled)
     end)
 end
 
--- SLIDER FUNCTION
-local function CreateSlider(text, settingKey, min, max, default)
-    local SliderFrame = Instance.new("Frame")
-    SliderFrame.Parent = ScrollingFrame
-    SliderFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
-    SliderFrame.Size = UDim2.new(1, 0, 0, 60)
-    
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 12)
-    Corner.Parent = SliderFrame
-    
-    local Label = Instance.new("TextLabel")
-    Label.Parent = SliderFrame
-    Label.BackgroundTransparency = 1
-    Label.Position = UDim2.new(0, 15, 0, 5)
-    Label.Size = UDim2.new(0.7, 0, 0.4, 0)
-    Label.Font = Enum.Font.Gotham
-    Label.Text = text .. ": " .. default
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.TextScaled = true
-    
-    local SliderBg = Instance.new("Frame")
-    SliderBg.Parent = SliderFrame
-    SliderBg.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-    SliderBg.BorderSizePixel = 0
-    SliderBg.Position = UDim2.new(0, 15, 0.55, 0)
-    SliderBg.Size = UDim2.new(0.7, 0, 0, 8)
-    
-    local SliderCorner = Instance.new("UICorner")
-    SliderCorner.CornerRadius = UDim.new(0, 4)
-    SliderCorner.Parent = SliderBg
-    
-    local SliderFill = Instance.new("Frame")
-    SliderFill.Parent = SliderBg
-    SliderFill.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
-    SliderFill.BorderSizePixel = 0
-    SliderFill.Size = UDim2.new((default-min)/(max-min), 0, 1, 0)
-    SliderFill.Position = UDim2.new(0, 0, 0, 0)
-    
-    local FillCorner = Instance.new("UICorner")
-    FillCorner.CornerRadius = UDim.new(0, 4)
-    FillCorner.Parent = SliderFill
-    
-    local dragging = false
-    local value = default
-    
-    SliderFill.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-        end
-    end)
-    
-    SliderFill.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    
-    RunService.Heartbeat:Connect(function()
-        if dragging then
-            local Mouse = Player:GetMouse()
-            local percent = math.clamp((Mouse.X - SliderBg.AbsolutePosition.X) / SliderBg.AbsoluteSize.X, 0, 1)
-            SliderFill.Size = UDim2.new(percent, 0, 1, 0)
-            value = math.floor(min + (max - min) * percent)
-            Label.Text = text .. ": " .. value
-            Settings[settingKey] = value
-        end
-    end)
-end
-
--- CREATE ALL CONTROLS
-CreateToggle("🚀 Auto Sprint", "AutoSprint", function(state) end)
-CreateToggle("💨 Infinite Stamina", "InfiniteStamina", function(state) end)
-CreateToggle("🛡️ Anti Out of Bounds", "AntiOOB", function(state) end)
-CreateToggle("⚡ Speed Boost", "SpeedBoost", function(state) end)
-CreateSlider("On Ball Speed", "OnBallSpeed", 16, 50, 25)
-CreateSlider("Off Ball Speed", "OffBallSpeed", 16, 40, 20)
-CreateToggle("🎯 Auto Time", "AutoTime", function(state) end)
-CreateSlider("Perfect Time", "PerfectTime", 0.1, 1.5, 0.7)
-CreateSlider("Early Time", "EarlyTime", 0.01, 0.5, 0.1)
-CreateToggle("🛑 Disable Movement Lock", "DisableMovementLock", function(state) end)
-CreateToggle("💎 Dribble Macro", "DribbleMacro", function(state) end)
-CreateToggle("🔒 Disable Turn Lock", "DisableTurnLock", function(state) end)
-CreateToggle("🛡️ Auto Guard", "AutoGuard", function(state) end)
-CreateToggle("🧤 Auto Steal", "AutoSteal", function(state) end)
-CreateToggle("🌀 Spin Bot", "SpinBot", function(state) end)
-CreateToggle("⚔️ Sprint Guard", "SprintGuard", function(state) end)
-
-ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 20)
-
--- MAIN FEATURES LOOP
-spawn(function()
-    while wait(0.1) do
-        local Character = Player.Character
-        if Character and Character:FindFirstChild("Humanoid") and Character:FindFirstChild("HumanoidRootPart") then
-            local Humanoid = Character.Humanoid
-            local RootPart = Character.HumanoidRootPart
-            
-            -- SPEED BOOST
-            if Settings.SpeedBoost then
-                Humanoid.WalkSpeed = (RootPart.Velocity.Magnitude > 25 and Settings.OnBallSpeed or Settings.OffBallSpeed)
+-- CREATE TOGGLES
+Toggle("🚀 Speed Hack", function(on)
+    if on then
+        spawn(function()
+            while Player.Character and Player.Character:FindFirstChild("Humanoid") do
+                Player.Character.Humanoid.WalkSpeed = 50
+                wait()
             end
-            
-            -- AUTO SPRINT
-            if Settings.AutoSprint then
-                Humanoid:ChangeState(Enum.HumanoidStateType.Running)
-            end
-            
-            -- ANTI OOB
-            if Settings.AntiOOB and RootPart.Position.Y < -45 then
-                RootPart.CFrame = CFrame.new(RootPart.Position.X, 10, RootPart.Position.Z)
-            end
-        end
+        end)
     end
 end)
 
--- LOADED NOTIFICATION
-local LoadNotify = Instance.new("TextLabel")
-LoadNotify.Parent = MainFrame
-LoadNotify.BackgroundColor3 = Color3.fromRGB(0, 162, 
+Toggle("💨 Auto Sprint", function(on)
+    if on then
+        spawn(function()
+            while Player.Character and Player.Character:FindFirstChild("Humanoid") do
+                Player.Character.Humanoid:ChangeState(8)
+                wait()
+            end
+        end)
+    end
+end)
+
+Toggle("🛡️ No Fall", function(on)
+    if on then
+        spawn(function()
+            while Player.Character do
+                if Player.Character:FindFirstChild("Humanoid") then
+                    Player.Character.Humanoid.PlatformStand = true
+                end
+                wait(0.1)
+            end
+        end)
+    end
+end)
+
+Toggle("🌟 Fly", function(on)
+    local BodyVelocity = nil
+    if on then
+        local char = Player.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            BodyVelocity = Instance.new("BodyVelocity")
+            BodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+            BodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            BodyVelocity.Parent = char.HumanoidRootPart
+            
+            spawn(function()
+                while BodyVelocity do
+                    BodyVelocity.Velocity = Player:GetMouse().Hit.Position + Vector3.new(0, 10, 0)
+                    wait()
+                end
+            end)
+        end
+    else
+        if BodyVelocity then BodyVelocity:Destroy() end
+    end
+end)
+
+Toggle("🔥 Anti OOB", function(on)
+    if on then
+        spawn(function()
+            while wait(0.1) do
+                local char = Player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    if char.HumanoidRootPart.Position.Y < -50 then
+                        char.HumanoidRootPart.CFrame = CFrame.new(0, 20, 0)
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- UPDATE SCROLL SIZE
+Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
+end)
+
+-- NOTIFICATION
+game.StarterGui:SetCore("SendNotification", {
+    Title = "KqzlvoHub";
+    Text = "v3.0 LOADED! Drag UI around!";
+    Duration = 4
+})
+
+print("⭐ KqzlvoHub v3.0 LOADED SUCCESSFULLY ⭐")
