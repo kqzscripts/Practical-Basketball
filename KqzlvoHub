@@ -1,17 +1,67 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Shield, Zap, Ghost, Settings, Crosshair, Timer, Activity, Lock, User
+  Shield, Zap, Ghost, Settings, Crosshair, Timer, Activity, Lock, User, Target
 } from "lucide-react";
 import { CustomSwitch } from "@/components/ui/custom-switch";
 import { CustomSlider } from "@/components/ui/custom-slider";
 import bgImage from "@assets/generated_images/luxury_dark_abstract_tech_background_with_gold_and_purple_accents.png";
 
-export default function Hub() {
+export default function BasketballHub() {
   const [activeCategory, setActiveCategory] = useState("main");
-  const [autoTime, setAutoTime] = useState([50]);
-  const [speedBoost, setSpeedBoost] = useState([20]);
-  const [dribbleSpeed, setDribbleSpeed] = useState([15]);
+  const [shotPower, setShotPower] = useState([75]);
+  const [aimAssistStrength, setAimAssistStrength] = useState([60]);
+  const [speedBoost, setSpeedBoost] = useState([25]);
+  const [jumpBoost, setJumpBoost] = useState([30]);
+  const [dribbleSpeed, setDribbleSpeed] = useState([40]);
+  const [stealRange, setStealRange] = useState([15]);
+
+  const SidebarItem = ({ icon, label, active, onClick }) => (
+    <motion.div
+      whileHover={{ scale: 1.02, x: 4 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
+        active 
+          ? "bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 text-white shadow-[0_0_15px_rgba(255,215,0,0.3)]" 
+          : "hover:bg-white/5 text-zinc-400 hover:text-white"
+      }`}
+    >
+      <div className={`${active ? "text-primary" : ""}`}>{icon}</div>
+      <span className="text-sm font-medium">{label}</span>
+      {active && <div className="ml-auto w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(255,215,0,0.8)]" />}
+    </motion.div>
+  );
+
+  const FeatureCard = ({ title, icon, children }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-panel rounded-2xl p-6 space-y-4 border border-white/5"
+    >
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
+          {icon}
+        </div>
+        <h3 className="text-lg font-display font-semibold text-white">{title}</h3>
+      </div>
+      <div className="space-y-4">
+        {children}
+      </div>
+    </motion.div>
+  );
+
+  const ControlRow = ({ label, description, children }) => (
+    <div className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-white/5 transition-colors">
+      <div className="flex-1">
+        <p className="text-sm font-medium text-white">{label}</p>
+        {description && <p className="text-xs text-zinc-400 mt-0.5">{description}</p>}
+      </div>
+      <div className="ml-4">
+        {children}
+      </div>
+    </div>
+  );
 
   return (
     <div className="relative w-full h-screen overflow-hidden flex items-center justify-center font-sans text-white">
@@ -21,19 +71,20 @@ export default function Hub() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative z-10 w-[900px] h-[600px] flex rounded-3xl overflow-hidden glass-panel"
+        className="relative z-10 w-[950px] h-[650px] flex rounded-3xl overflow-hidden glass-panel"
       >
         {/* Sidebar */}
         <div className="w-64 bg-zinc-950/80 backdrop-blur-md border-r border-white/5 flex flex-col">
           <div className="p-8 pb-4">
             <h1 className="text-2xl font-display font-bold luxury-gradient tracking-wider">
-              KQZLVO<span className="text-white">HUB</span>
+              COURT<span className="text-white">MASTER</span>
             </h1>
-            <p className="text-xs text-zinc-500 font-mono mt-1">v2.4.0 • PREMIUM</p>
+            <p className="text-xs text-zinc-500 font-mono mt-1">v3.1.2 • BASKETBALL PRO</p>
           </div>
           <div className="flex-1 px-4 py-6 space-y-2">
-            <SidebarItem icon={<Zap size={18} />} label="Main Features" active={activeCategory === "main"} onClick={() => setActiveCategory("main")} />
-            <SidebarItem icon={<Ghost size={18} />} label="Visuals & ESP" active={activeCategory === "visuals"} onClick={() => setActiveCategory("visuals")} />
+            <SidebarItem icon={<Target size={18} />} label="Shooting & Aim" active={activeCategory === "main"} onClick={() => setActiveCategory("main")} />
+            <SidebarItem icon={<Activity size={18} />} label="Movement & Stats" active={activeCategory === "movement"} onClick={() => setActiveCategory("movement")} />
+            <SidebarItem icon={<Ghost size={18} />} label="Visual ESP" active={activeCategory === "visuals"} onClick={() => setActiveCategory("visuals")} />
             <SidebarItem icon={<Shield size={18} />} label="Defense & Misc" active={activeCategory === "misc"} onClick={() => setActiveCategory("misc")} />
             <div className="my-4 h-px bg-white/5" />
             <SidebarItem icon={<Settings size={18} />} label="Settings" active={activeCategory === "settings"} onClick={() => setActiveCategory("settings")} />
@@ -44,57 +95,187 @@ export default function Hub() {
         <div className="flex-1 bg-zinc-900/40 p-8 overflow-y-auto">
           <AnimatePresence mode="wait">
             <motion.div key={activeCategory} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+              
               {activeCategory === "main" && (
                 <>
-                  <FeatureCard title="Movement" icon={<Activity className="text-primary" />}>
-                    <ControlRow label="Auto Sprint" description="Automatically sprints when moving"><CustomSwitch defaultChecked /></ControlRow>
-                    <ControlRow label="Infinite Stamina" description="Never run out of energy"><CustomSwitch defaultChecked /></ControlRow>
-                    <ControlRow label="Speed Boost" description="Increase movement speed">
-                      <CustomSlider value={speedBoost} onValueChange={setSpeedBoost} max={100} />
+                  <FeatureCard title="Shooting Assistance" icon={<Target className="text-primary" />}>
+                    <ControlRow label="Perfect Shot Timing" description="Auto green light shots">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Aim Assist" description="Enhanced shooting accuracy">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Aim Strength" description="Adjust aim assist intensity">
+                      <CustomSlider value={aimAssistStrength} onValueChange={setAimAssistStrength} max={100} />
+                    </ControlRow>
+                    <ControlRow label="Shot Power Control" description="Perfect shot power every time">
+                      <CustomSlider value={shotPower} onValueChange={setShotPower} max={100} />
                     </ControlRow>
                   </FeatureCard>
-                  <FeatureCard title="Time Manipulation" icon={<Timer className="text-purple-400" />}>
-                    <ControlRow label="Auto Time" description="Perfect shot timing assist">
-                      <CustomSlider value={autoTime} onValueChange={setAutoTime} max={100} />
+                  
+                  <FeatureCard title="Ball Handling" icon={<Activity className="text-purple-400" />}>
+                    <ControlRow label="Auto Dribble" description="Perfect dribbling rhythm">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Enhanced Ball Control" description="Never lose the ball">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Dribble Speed" description="Faster crossovers and moves">
+                      <CustomSlider value={dribbleSpeed} onValueChange={setDribbleSpeed} max={100} />
                     </ControlRow>
                   </FeatureCard>
                 </>
               )}
-              {/* Add other categories similarly */}
+
+              {activeCategory === "movement" && (
+                <>
+                  <FeatureCard title="Player Movement" icon={<Activity className="text-green-400" />}>
+                    <ControlRow label="Speed Boost" description="Faster running and movement">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Movement Speed" description="Adjust movement multiplier">
+                      <CustomSlider value={speedBoost} onValueChange={setSpeedBoost} max={100} />
+                    </ControlRow>
+                    <ControlRow label="Jump Boost" description="Higher jumping ability">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Jump Height" description="Control jump power">
+                      <CustomSlider value={jumpBoost} onValueChange={setJumpBoost} max={100} />
+                    </ControlRow>
+                  </FeatureCard>
+
+                  <FeatureCard title="Stamina & Energy" icon={<Timer className="text-blue-400" />}>
+                    <ControlRow label="Infinite Stamina" description="Never get tired">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Auto Sprint" description="Always at maximum speed">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Quick Recovery" description="Instant stamina regeneration">
+                      <CustomSwitch />
+                    </ControlRow>
+                  </FeatureCard>
+                </>
+              )}
+
+              {activeCategory === "visuals" && (
+                <>
+                  <FeatureCard title="Player ESP" icon={<Ghost className="text-cyan-400" />}>
+                    <ControlRow label="Player Boxes" description="See all players through walls">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Player Names" description="Display player usernames">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Team Colors" description="Different colors for teams">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Distance Display" description="Show distance to players">
+                      <CustomSwitch />
+                    </ControlRow>
+                  </FeatureCard>
+
+                  <FeatureCard title="Ball & Court ESP" icon={<Target className="text-orange-400" />}>
+                    <ControlRow label="Ball Tracer" description="Always know where the ball is">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Hoop Highlight" description="Enhanced basket visibility">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Shot Arc Prediction" description="See ball trajectory">
+                      <CustomSwitch />
+                    </ControlRow>
+                  </FeatureCard>
+                </>
+              )}
+
+              {activeCategory === "misc" && (
+                <>
+                  <FeatureCard title="Defensive Tools" icon={<Shield className="text-red-400" />}>
+                    <ControlRow label="Auto Block" description="Perfect block timing">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Auto Steal" description="Enhanced steal attempts">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Steal Range" description="Increase steal distance">
+                      <CustomSlider value={stealRange} onValueChange={setStealRange} max={50} />
+                    </ControlRow>
+                    <ControlRow label="Perfect Defense" description="Enhanced defensive positioning">
+                      <CustomSwitch />
+                    </ControlRow>
+                  </FeatureCard>
+
+                  <FeatureCard title="Game Utilities" icon={<Settings className="text-yellow-400" />}>
+                    <ControlRow label="Auto Rebound" description="Always get the rebound">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Ball Magnet" description="Ball comes to you">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Score Multiplier" description="Enhanced scoring">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Foul Immunity" description="Never commit fouls">
+                      <CustomSwitch />
+                    </ControlRow>
+                  </FeatureCard>
+                </>
+              )}
+
+              {activeCategory === "settings" && (
+                <>
+                  <FeatureCard title="Hub Configuration" icon={<Settings className="text-primary" />}>
+                    <ControlRow label="Save Settings" description="Auto-save all configurations">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Stealth Mode" description="Hide from detection">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                    <ControlRow label="Performance Mode" description="Optimize for lower-end devices">
+                      <CustomSwitch />
+                    </ControlRow>
+                    <ControlRow label="Auto Updates" description="Keep hub always updated">
+                      <CustomSwitch defaultChecked />
+                    </ControlRow>
+                  </FeatureCard>
+
+                  <FeatureCard title="Keybinds" icon={<User className="text-indigo-400" />}>
+                    <ControlRow label="Toggle Hub" description="Show/hide hub interface">
+                      <span className="text-xs text-zinc-400 font-mono bg-zinc-800 px-2 py-1 rounded">INSERT</span>
+                    </ControlRow>
+                    <ControlRow label="Emergency Disable" description="Quick disable all features">
+                      <span className="text-xs text-zinc-400 font-mono bg-zinc-800 px-2 py-1 rounded">F9</span>
+                    </ControlRow>
+                    <ControlRow label="Speed Toggle" description="Quick speed boost toggle">
+                      <span className="text-xs text-zinc-400 font-mono bg-zinc-800 px-2 py-1 rounded">F1</span>
+                    </ControlRow>
+                  </FeatureCard>
+                </>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
       </motion.div>
     </div>
   );
-}import * as SwitchPrimitives from "@radix-ui/react-switch";
+}
+```
+
+```jsx
+// CustomSwitch component remains the same
+import * as SwitchPrimitives from "@radix-ui/react-switch";
 export const CustomSwitch = ({ ...props }) => (
   <SwitchPrimitives.Root className="h-6 w-11 rounded-full data-[state=checked]:bg-primary data-[state=unchecked]:bg-zinc-800 transition-all" {...props}>
     <SwitchPrimitives.Thumb className="block h-5 w-5 rounded-full bg-white data-[state=checked]:translate-x-5 transition-transform" />
   </SwitchPrimitives.Root>
-);import * as SliderPrimitives from "@radix-ui/react-slider";
+);
+```
+
+```jsx
+// CustomSlider component remains the same
+import * as SliderPrimitives from "@radix-ui/react-slider";
 export const CustomSlider = ({ ...props }) => (
   <SliderPrimitives.Root className="relative flex items-center w-full h-5" {...props}>
     <SliderPrimitives.Track className="bg-zinc-800 h-2 w-full rounded-full overflow-hidden">
-      <SliderPrimitives.Range className="absolute h-full bg-primary" />
-    </SliderPrimitives.Track>
-    <SliderPrimitives.Thumb className="h-5 w-5 rounded-full border-2 border-primary bg-background shadow-[0_0_10px_rgba(255,215,0,0.5)]" />
-  </SliderPrimitives.Root>
-);@theme inline {
-  --font-display: 'Cinzel', serif;
-  --color-primary: hsl(46 97% 65%); /* Premium Gold */
-  --color-secondary: hsl(270 50% 40%); /* Royal Purple */
-}
-
-.glass-panel {
-  background: rgba(9, 9, 11, 0.4);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-.luxury-gradient {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  -webkit-background-clip: text;
-  color: transparent;
-}
+      <SliderPrimitives.Range className="absolute h-full bg
