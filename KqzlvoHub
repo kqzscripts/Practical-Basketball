@@ -1,179 +1,195 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/Library.lua"))()
-local ThemeManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/ThemeManager.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua"))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local Window = Library:CreateWindow({
-    Title = 'KqzlvoHub | Practical Basketball',
-    Center = true,
-    AutoShow = true,
-    TabPadding = 8,
-    MenuFadeTime = 0.2
+local Window = Rayfield:CreateWindow({
+   Name = "KqzlvoHub",
+   LoadingTitle = "KqzlvoHub | Practical Basketball",
+   LoadingSubtitle = "by Kqzlvo",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "KqzlvoHub", -- Create a custom folder for your hub/game
+      FileName = "PracticalBasketball"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided",
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use it
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to use for your key
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (standard x86)
+   }
 })
 
-local Tabs = {
-    Main = Window:AddTab('Main'),
-    Movement = Window:AddTab('Movement'),
-    Dribble = Window:AddTab('Dribble'),
-    Combat = Window:AddTab('Combat'),
-    ['UI Settings'] = Window:AddTab('UI Settings'),
-}
+local MainTab = Window:CreateTab("Main", 4483362458) -- Title, Image
+local MovementTab = Window:CreateTab("Movement", 4483362458)
+local VisualsTab = Window:CreateTab("Visuals", 4483362458)
 
-local MainGroupBox = Tabs.Main:AddLeftGroupbox('Shooting & Timing')
+-- Variables
+local AutoTimeEnabled = false
+local AutoTimeValue = 0.5
+local AutoSprintEnabled = false
+local InfiniteStaminaEnabled = false
+local SpeedBoostEnabled = false
+local SpeedBoostValue = 16
+local DisableMovementLockEnabled = false
+local AutoGuardEnabled = false
+local AutoBlockEnabled = false
+local AutoStealEnabled = false
+local SpinBotEnabled = false
 
-MainGroupBox:AddToggle('AutoTime', {
-    Text = 'Auto Time',
-    Default = false,
-    Tooltip = 'Automatically times your shot',
-    Callback = function(Value)
-        print('Auto Time:', Value)
+-- Features Implementation
+
+-- Auto Time
+MainTab:CreateToggle({
+   Name = "Auto Time",
+   CurrentValue = false,
+   Flag = "AutoTime",
+   Callback = function(Value)
+      AutoTimeEnabled = Value
+   end,
+})
+
+MainTab:CreateSlider({
+   Name = "Auto Time Delay",
+   Range = {0, 1},
+   Increment = 0.05,
+   Suffix = "s",
+   CurrentValue = 0.5,
+   Flag = "AutoTimeDelay",
+   Callback = function(Value)
+      AutoTimeValue = Value
+   end,
+})
+
+-- Movement Features
+MovementTab:CreateToggle({
+   Name = "Auto Sprint",
+   CurrentValue = false,
+   Flag = "AutoSprint",
+   Callback = function(Value)
+      AutoSprintEnabled = Value
+   end,
+})
+
+MovementTab:CreateToggle({
+   Name = "Infinite Stamina",
+   CurrentValue = false,
+   Flag = "InfStamina",
+   Callback = function(Value)
+      InfiniteStaminaEnabled = Value
+   end,
+})
+
+MovementTab:CreateToggle({
+   Name = "Speed Boost",
+   CurrentValue = false,
+   Flag = "SpeedBoost",
+   Callback = function(Value)
+      SpeedBoostEnabled = Value
+   end,
+})
+
+MovementTab:CreateSlider({
+   Name = "Speed Value",
+   Range = {16, 100},
+   Increment = 1,
+   Suffix = " Speed",
+   CurrentValue = 16,
+   Flag = "SpeedValue",
+   Callback = function(Value)
+      SpeedBoostValue = Value
+   end,
+})
+
+MovementTab:CreateToggle({
+   Name = "Disable Movement Lock",
+   CurrentValue = false,
+   Flag = "DisableMoveLock",
+   Callback = function(Value)
+      DisableMovementLockEnabled = Value
+   end,
+})
+
+-- Combat/Defense
+MainTab:CreateToggle({
+   Name = "Auto Guard",
+   CurrentValue = false,
+   Flag = "AutoGuard",
+   Callback = function(Value)
+      AutoGuardEnabled = Value
+   end,
+})
+
+MainTab:CreateToggle({
+   Name = "Auto Block",
+   CurrentValue = false,
+   Flag = "AutoBlock",
+   Callback = function(Value)
+      AutoBlockEnabled = Value
+   end,
+})
+
+MainTab:CreateToggle({
+   Name = "Auto Steal",
+   CurrentValue = false,
+   Flag = "AutoSteal",
+   Callback = function(Value)
+      AutoStealEnabled = Value
+   end,
+})
+
+-- Fun/Misc
+MovementTab:CreateToggle({
+   Name = "Spin Bot",
+   CurrentValue = false,
+   Flag = "SpinBot",
+   Callback = function(Value)
+      SpinBotEnabled = Value
+   end,
+})
+
+-- Logic Loop
+task.spawn(function()
+    while task.wait() do
+        local Character = game.Players.LocalPlayer.Character
+        if Character and Character:FindFirstChild("Humanoid") then
+            local Humanoid = Character.Humanoid
+            
+            -- Speed Boost logic
+            if SpeedBoostEnabled then
+                Humanoid.WalkSpeed = SpeedBoostValue
+            end
+            
+            -- Spin Bot logic
+            if SpinBotEnabled then
+                Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(20), 0)
+            end
+            
+            -- Infinite Stamina Placeholder (Would need specific game variables)
+            if InfiniteStaminaEnabled then
+                -- Logic to find stamina value in the game and lock it
+            end
+        end
     end
+end)
+
+Rayfield:Notify({
+   Title = "KqzlvoHub Loaded",
+   Content = "Enjoy the script for Practical Basketball!",
+   Duration = 5,
+   Image = 4483362458,
+   Actions = {
+      Ignore = {
+         Name = "Okay!",
+         Callback = function()
+            print("The user tapped Okay!")
+         end
+      },
+   },
 })
-
-MainGroupBox:AddSlider('PerfectTiming', {
-    Text = 'Perfect Timing Offset',
-    Default = 0,
-    Min = -50,
-    Max = 50,
-    Rounding = 1,
-    Compact = false,
-})
-
-local MovementGroupBox = Tabs.Movement:AddLeftGroupbox('Movement Mods')
-
-MovementGroupBox:AddToggle('AutoSprint', {
-    Text = 'Auto Sprint',
-    Default = false,
-    Callback = function(Value)
-        print('Auto Sprint:', Value)
-    end
-})
-
-MovementGroupBox:AddToggle('InfStamina', {
-    Text = 'Infinite Stamina',
-    Default = false,
-    Callback = function(Value)
-        print('Inf Stamina:', Value)
-    end
-})
-
-MovementGroupBox:AddToggle('SpeedBoostOnBall', {
-    Text = 'Speed Boost (On Ball)',
-    Default = false,
-    Callback = function(Value)
-        print('Speed Boost On Ball:', Value)
-    end
-})
-
-MovementGroupBox:AddToggle('SpeedBoostOffBall', {
-    Text = 'Speed Boost (Off Ball)',
-    Default = false,
-    Callback = function(Value)
-        print('Speed Boost Off Ball:', Value)
-    end
-})
-
-MovementGroupBox:AddToggle('DisableMoveLock', {
-    Text = 'Disable Movement Lock',
-    Default = false,
-    Tooltip = 'Move after pump fake',
-    Callback = function(Value)
-        print('Disable Move Lock:', Value)
-    end
-})
-
-MovementGroupBox:AddToggle('DisableTurnLock', {
-    Text = 'Disable Turn Lock',
-    Default = false,
-    Callback = function(Value)
-        print('Disable Turn Lock:', Value)
-    end
-})
-
-MovementGroupBox:AddToggle('SpinBot', {
-    Text = 'Spin Bot',
-    Default = false,
-    Callback = function(Value)
-        print('Spin Bot:', Value)
-    end
-})
-
-local DribbleGroupBox = Tabs.Dribble:AddLeftGroupbox('Dribbling')
-
-DribbleGroupBox:AddToggle('DribbleMacro', {
-    Text = 'Dribble Macro',
-    Default = false,
-    Callback = function(Value)
-        print('Dribble Macro:', Value)
-    end
-})
-
-DribbleGroupBox:AddToggle('AntiOOB', {
-    Text = 'Anti Out of Bounds',
-    Default = false,
-    Callback = function(Value)
-        print('Anti OOB:', Value)
-    end
-})
-
-DribbleGroupBox:AddSlider('DribbleSpeed', {
-    Text = 'Dribble Speed Multiplier',
-    Default = 1,
-    Min = 1,
-    Max = 2,
-    Rounding = 2,
-    Compact = false,
-})
-
-local CombatGroupBox = Tabs.Combat:AddLeftGroupbox('Defense')
-
-CombatGroupBox:AddToggle('AutoGuard', {
-    Text = 'Auto Guard',
-    Default = false,
-    Callback = function(Value)
-        print('Auto Guard:', Value)
-    end
-})
-
-CombatGroupBox:AddToggle('AutoBlock', {
-    Text = 'Auto Block',
-    Default = false,
-    Callback = function(Value)
-        print('Auto Block:', Value)
-    end
-})
-
-CombatGroupBox:AddToggle('AutoSteal', {
-    Text = 'Auto Steal',
-    Default = false,
-    Callback = function(Value)
-        print('Auto Steal:', Value)
-    end
-})
-
-CombatGroupBox:AddToggle('SprintWhileGuarding', {
-    Text = 'Sprint While Guarding',
-    Default = false,
-    Callback = function(Value)
-        print('Sprint While Guarding:', Value)
-    end
-})
-
-Library:SetWatermarkVisibility(true)
-Library:SetWatermark('KqzlvoHub | ' .. os.date('%X'))
-
-local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')
-MenuGroup:AddButton('Unload', function() Library:Unload() end)
-MenuGroup:AddLabel('Menu bind'):AddKeyPicker('MenuKeybind', { Default = 'End', NoUserUserTag = true, Text = 'Menu keybind' })
-
-Library.KeybindFrame.Visible = true
-
-ThemeManager:SetLibrary(Library)
-SaveManager:SetLibrary(Library)
-SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({ 'MenuKeybind' })
-ThemeManager:SetFolder('KqzlvoHub')
-SaveManager:SetFolder('KqzlvoHub/PracticalBasketball')
-SaveManager:BuildConfigSection(Tabs['UI Settings'])
-ThemeManager:ApplyToTab(Tabs['UI Settings'])
-
-Library:Notify('KqzlvoHub Loaded!', 5)
